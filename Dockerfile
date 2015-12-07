@@ -1,2 +1,3 @@
-FROM python:2-onbuild
+FROM centos
+EXPOSE 80
 CMD [ "python", "./server.py" ]
