@@ -3,9 +3,8 @@
 from BaseHTTPServer import BaseHTTPRequestHandler,HTTPServer
 import time, socket, urllib2
 
-# set up variables
+# set up static variables
 PORT_NUMBER = 80
-timeStr = time.strftime("%c") # obtains current time
 hostName = socket.gethostname()
 response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id')
 instance_id = response.read()
@@ -13,6 +12,7 @@ response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/local-ipv4')
 privateIp = response.read()
 response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/public-ipv4')
 publicIp = response.read()
+timeStr = time.strftime("%c") # obtains current time at server launch
 
 # compose html
 htmlFormat = """
@@ -35,6 +35,8 @@ class myHandler(BaseHTTPRequestHandler):
     
     #Handler for the GET requests
     def do_GET(self):
+        timeStr = time.strftime("%c") # obtains current time of get
+        composed_html = htmlFormat.format(**locals()) # refresh the html
         self.send_response(200)
         self.send_header('Content-type','text/html')
         self.end_headers()
