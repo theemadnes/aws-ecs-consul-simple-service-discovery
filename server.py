@@ -23,7 +23,7 @@ htmlFormat = """
   <p>The EC2 instance ID is:  {instance_id}</p>
   <p>The instance public IP is:  {publicIp}</p>
   <p>The instance private IP is:  {privateIp}</p>
-  <p>The time (UTC) this content wwas served is:  {timeStr}</p>
+  <p>The time (UTC) this content was served is:  {timeStr}</p>
 </body>
 </html> """
 
