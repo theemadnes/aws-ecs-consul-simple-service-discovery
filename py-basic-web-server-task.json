@@ -1,24 +1,37 @@
 {
     "containerDefinitions": [
         {
-            "name": "py-basic-web-server",
-            "image": "theemadnes/py-basic-web-server",
-            "memory": "128",
-            "essential": true,
+            "volumesFrom": [],
+            "memory": 512,
+            "extraHosts": null,
+            "dnsServers": null,
+            "disableNetworking": null,
+            "dnsSearchDomains": null,
             "portMappings": [
                 {
-                    "hostPort": "80",
-                    "containerPort": "80",
+                    "hostPort": 80,
+                    "containerPort": 80,
                     "protocol": "tcp"
                 }
             ],
-            "environment": null,
-            "mountPoints": null,
-            "volumesFrom": null,
-            "extraHosts": null,
-            "logConfiguration": null,
+            "hostname": null,
+            "essential": true,
+            "entryPoint": [],
+            "mountPoints": [],
+            "name": "py-basic-web-server",
             "ulimits": null,
-            "dockerLabels": null
+            "dockerSecurityOptions": null,
+            "environment": [],
+            "links": null,
+            "workingDirectory": null,
+            "readonlyRootFilesystem": null,
+            "image": "theemadnes/py-basic-web-server",
+            "command": [],
+            "user": null,
+            "dockerLabels": null,
+            "logConfiguration": null,
+            "cpu": 512,
+            "privileged": null
         }
     ],
     "volumes": [],
