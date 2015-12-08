@@ -1,0 +1,26 @@
+{
+    "containerDefinitions": [
+        {
+            "name": "py-basic-web-server",
+            "image": "theemadnes/py-basic-web-server",
+            "memory": "128",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": "80",
+                    "containerPort": "80",
+                    "protocol": "tcp"
+                }
+            ],
+            "environment": null,
+            "mountPoints": null,
+            "volumesFrom": null,
+            "extraHosts": null,
+            "logConfiguration": null,
+            "ulimits": null,
+            "dockerLabels": null
+        }
+    ],
+    "volumes": [],
+    "family": "py-basic-web-server-task"
+}
