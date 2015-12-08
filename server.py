@@ -23,20 +23,19 @@ htmlFormat = """
   <p>The EC2 instance ID is:  {instance_id}</p>
   <p>The instance public IP is:  {publicIp}</p>
   <p>The instance private IP is:  {privateIp}</p>
-  <p>The time (UTC) this server started is:  {timeStr}</p>
+  <p>The time (UTC) this content wwas served is:  {timeStr}</p>
 </body>
 </html> """
 
 composed_html = htmlFormat.format(**locals())
 
-#This class will handles any incoming request from
-#the browser 
+#This class will handles any incoming request from the browser 
 class myHandler(BaseHTTPRequestHandler):
     
     #Handler for the GET requests
     def do_GET(self):
         timeStr = time.strftime("%c") # obtains current time of get
-        composed_html = htmlFormat.format(**locals()) # refresh the html
+        composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
         self.send_response(200)
         self.send_header('Content-type','text/html')
         self.end_headers()
