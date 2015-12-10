@@ -1,9 +1,11 @@
 #/usr/bin/python
 # import modules
-import time, cherrypy, socket, urllib2
+import time, socket, urllib2
+from twisted.web import server, resource
+from twisted.internet import reactor
 
 # set up static variables
-PORT_NUMBER = 80
+# PORT_NUMBER = 80 # not needed here - using 8080 instead
 hostName = socket.gethostname()
 response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id')
 instance_id = response.read()
@@ -29,14 +31,14 @@ htmlFormat = """
 composed_html = htmlFormat.format(**locals())
 
 #This class will handles any incoming request from the browser 
-class HelloWorld(object):
-  @cherrypy.expose
-  def index(self):
-      timeStr = time.strftime("%c") # obtains current time of get
-      composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
-      return composed_html
+class SimpleServer(resource.Resource):
+  isLeaf = True
+  def render_GET(self, request):
+    timeStr = time.strftime("%c") # obtains current time of get
+    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
+    print request
+    return composed_html
 
-if __name__ == '__main__':
-
-  cherrypy.quickstart(HelloWorld())
-
+site = server.Site(SimpleServer())
+reactor.listenTCP(8080, site)
+reactor.run()
