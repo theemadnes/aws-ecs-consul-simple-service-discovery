@@ -54,7 +54,7 @@ class SimpleServer(resource.Resource):
     except:
       containerIps = ''
 
-    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr, containerIps = service_ips) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
+    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr, containerIps = containerIps) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
     print request
     return composed_html
 
