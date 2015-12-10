@@ -3,7 +3,7 @@
 import time, socket, urllib2
 from twisted.web import server, resource
 from twisted.internet import reactor
-from dns import resolver
+import dns
 
 # set up static variables
 # PORT_NUMBER = 80 # not needed here - using 8080 instead
@@ -15,6 +15,9 @@ privateIp = response.read()
 response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/public-ipv4')
 publicIp = response.read()
 # timeStr = time.strftime("%c") # obtains current time at server launch
+resolver = dns.resolver.Resolver()
+resolver.timeout = 1
+resolver.lifetime = 1
 consul_resolver = resolver.Resolver()
 consul_resolver.port = 53
 consul_resolver.nameservers = ["127.0.0.1"]
@@ -30,7 +33,7 @@ htmlFormat = """
   <p>The instance private IP is:  {privateIp}</p>
   <p>The time (UTC) this content was served is:  {timeStr}</p>
   <p>*****************************************************</p>
-  <p>The curent containers supporting this service is / are:  {containerIps}</p>
+  <p>The current containers supporting this service is / are:  {containerIps}</p>
 
 </body>
 </html> """
@@ -41,12 +44,18 @@ htmlFormat = """
 class SimpleServer(resource.Resource):
   isLeaf = True
   def render_GET(self, request):
-    service_ips = '' # reset the ip string
+    containerIps = '' # reset the ip string
     timeStr = time.strftime("%c") # obtains current time of get
-    answer = consul_resolver.query("py-basic-web-server.service.consul", 'A') # get service A records from consul
-    for answer_ip in answer:
-      service_ips = service_ips + answer_ip + ' '
-    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr, containerIps = service_ips) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
+
+    try:
+      answer = consul_resolver.query('py-basic-web-server.service.consul', 'A') # get service A records from consul
+      for answer_ip in answer:
+        containerIps = containerIps + answer_ip + ' '
+
+    except:
+      containerIps = ''
+
+    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr, containerIps = containerIps) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
     print request
     return composed_html
 
