@@ -3,7 +3,7 @@
 import time, socket, urllib2
 from twisted.web import server, resource
 from twisted.internet import reactor
-import dns
+from dns import resolver
 
 # set up static variables
 # PORT_NUMBER = 80 # not needed here - using 8080 instead
@@ -15,10 +15,9 @@ privateIp = response.read()
 response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/public-ipv4')
 publicIp = response.read()
 # timeStr = time.strftime("%c") # obtains current time at server launch
-resolver = dns.resolver.Resolver()
-resolver.timeout = 1
-resolver.lifetime = 1
 consul_resolver = resolver.Resolver()
+consul_resolver.timeout = 1 # keep the timeout shortish
+consul_resolver.lifetime = 1
 consul_resolver.port = 53
 consul_resolver.nameservers = ["127.0.0.1"]
 
@@ -55,7 +54,7 @@ class SimpleServer(resource.Resource):
     except:
       containerIps = ''
 
-    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr, containerIps = containerIps) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
+    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr, containerIps = service_ips) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
     print request
     return composed_html
 
