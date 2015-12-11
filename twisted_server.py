@@ -18,7 +18,7 @@ publicIp = response.read()
 consul_resolver = resolver.Resolver()
 consul_resolver.timeout = 1 # keep the timeout shortish
 consul_resolver.lifetime = 1
-consul_resolver.port = 53
+consul_resolver.port = 8600
 consul_resolver.nameservers = [privateIp]
 
 # compose html
