@@ -49,7 +49,7 @@ class SimpleServer(resource.Resource):
     try:
       answer = consul_resolver.query('py-basic-web-server.service.consul', 'A') # get service A records from consul
       for answer_ip in answer:
-        containerIps = containerIps + answer_ip + ' '
+        containerIps = containerIps + str(answer_ip) + ' '
 
     except:
       containerIps = ''
