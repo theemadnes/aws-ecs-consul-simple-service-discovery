@@ -22,7 +22,8 @@ addressList = ''
 htmlFormat = """
 <html>
   <Title>Service Discovery Demo</Title>
-<body>
+
+<body onload="setInterval(function() {window.location.reload();}, 2000);">
   <p>The host name or container id is:  {hostName}</p>
   <p>The EC2 instance ID is:  {instance_id}</p>
   <p>The instance public IP is:  {publicIp}</p>
