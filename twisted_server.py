@@ -23,7 +23,7 @@ htmlFormat = """
 <html>
   <Title>Service Discovery Demo</Title>
 
-<body onload="setInterval(function() {window.location.reload();}, 2000);">
+<body>
   <p>The host name or container id is:  {hostName}</p>
   <p>The EC2 instance ID is:  {instance_id}</p>
   <p>The instance public IP is:  {publicIp}</p>
