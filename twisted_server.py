@@ -29,7 +29,7 @@ htmlFormat = """
   <p>The instance private IP is:  {privateIp}</p>
   <p>The time (UTC) this content was served is:  {timeStr}</p>
   <p>*****************************************************</p>
-  <p>The current containers supporting this service is / are:  {addressList}</p>
+  <p>The current container instance(s) supporting this service is / are:  {addressList}</p>
 
 </body>
 </html> """
@@ -41,7 +41,7 @@ class SimpleServer(resource.Resource):
   isLeaf = True
   def render_GET(self, request):
     addressList = '' # reset the ip string
-    timeStr = time.strftime("%c") # obtains current time of get
+    timeStr = time.strftime("%c") # obtains current time of GET from client
 
     try:
 
