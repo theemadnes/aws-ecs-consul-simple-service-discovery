@@ -8,6 +8,5 @@ RUN \
   apt-get install -y python python-dev python-pip python-virtualenv && \
   rm -rf /var/lib/apt/lists/*
 RUN ["pip","install","twisted"]
-RUN ["pip","install","dnspython"]
 CMD ["python","twisted_server.py"]
 # ENTRYPOINT ["/bin/bash"]
