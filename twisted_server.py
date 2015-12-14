@@ -52,7 +52,7 @@ class SimpleServer(resource.Resource):
 
       for item in parsedJson:
 
-        addressList.append(item['Address'] + ' ')
+        addressList = addressList + item['Address'] + ' '
 
     except:
 
