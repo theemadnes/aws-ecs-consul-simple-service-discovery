@@ -21,9 +21,11 @@ addressList = ''
 # set up the html doc that will be used to render data
 htmlFormat = """
 <html>
-  <Title>Service Discovery Demo</Title>
-
-<body>
+<head>
+<Title>Service Discovery Demo</Title>
+</head>
+  
+<body onload="JavaScript:timeRefresh(2000);">
   <p>The host name or container id is:  {hostName}</p>
   <p>The EC2 instance ID is:  {instance_id}</p>
   <p>The instance public IP is:  {publicIp}</p>
@@ -31,11 +33,8 @@ htmlFormat = """
   <p>The time (UTC) this content was served is:  {timeStr}</p>
   <p>*****************************************************</p>
   <p>The current container instance(s) supporting this service is / are:  {addressList}</p>
-
 </body>
 </html> """
-
-# composed_html = htmlFormat.format(**locals())
 
 #This class will handles any incoming request from the browser 
 class SimpleServer(resource.Resource):
@@ -59,7 +58,10 @@ class SimpleServer(resource.Resource):
 
       addressList = ''
 
-    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr, addressList = addressList) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
+    # perform basic interpolation
+    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr, addressList = addressList)
+    # replacing head to implement updating of html every few seconds - doing this because {} doesn't work with interpolation
+    composed_html = composed_html.replace('<head>', '<head> <script type="text/JavaScript"> function timeRefresh(timeoutPeriod) { setTimeout("location.reload(true);",timeoutPeriod); } </script>')
     print request
     return composed_html
 
