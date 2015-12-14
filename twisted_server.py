@@ -3,10 +3,10 @@
 import time, socket, urllib2
 from twisted.web import server, resource
 from twisted.internet import reactor
-from dns import resolver
+import json
 
 # set up static variables
-# PORT_NUMBER = 80 # not needed here - using 8080 instead
+serviceName = 'py-basic-web-server' # change this if your service name is something else
 hostName = socket.gethostname()
 response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id')
 instance_id = response.read()
@@ -14,14 +14,11 @@ response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/local-ipv4')
 privateIp = response.read()
 response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/public-ipv4')
 publicIp = response.read()
-# timeStr = time.strftime("%c") # obtains current time at server launch
-consul_resolver = resolver.Resolver()
-consul_resolver.timeout = 1 # keep the timeout shortish
-consul_resolver.lifetime = 1
-consul_resolver.port = 8600
-consul_resolver.nameservers = [privateIp]
 
-# compose html
+# create the string that will be used to reflect the container IPs
+addressList = ''
+
+# set up the html doc that will be used to render data
 htmlFormat = """
 <html>
   <Title>Service Discovery Demo</Title>
@@ -32,7 +29,7 @@ htmlFormat = """
   <p>The instance private IP is:  {privateIp}</p>
   <p>The time (UTC) this content was served is:  {timeStr}</p>
   <p>*****************************************************</p>
-  <p>The current containers supporting this service is / are:  {containerIps}</p>
+  <p>The current containers supporting this service is / are:  {addressList}</p>
 
 </body>
 </html> """
@@ -43,18 +40,25 @@ htmlFormat = """
 class SimpleServer(resource.Resource):
   isLeaf = True
   def render_GET(self, request):
-    containerIps = '' # reset the ip string
+    addressList = '' # reset the ip string
     timeStr = time.strftime("%c") # obtains current time of get
 
     try:
-      answer = consul_resolver.query('py-basic-web-server.service.consul', 'A') # get service A records from consul
-      for answer_ip in answer:
-        containerIps = containerIps + str(answer_ip) + ' '
+
+      # get service information from consul
+      response = urllib2.urlopen('http://' + privateIp + ':8500/v1/catalog/service/' + serviceName)
+      rawJson = response.read()
+      parsedJson = json.loads(rawJson)
+
+      for item in parsedJson:
+
+        addressList.append(item['Address'] + ' ')
 
     except:
-      containerIps = ''
 
-    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr, containerIps = containerIps) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
+      addressList = ''
+
+    composed_html = htmlFormat.format(hostName = hostName, instance_id = instance_id, publicIp = publicIp, privateIp = privateIp, timeStr = timeStr, addressList = addressList) # refresh the html, locals doesn't seem to work here (different scope? - investigate later)
     print request
     return composed_html
 
